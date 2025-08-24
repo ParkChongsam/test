@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude -c)",
+      "Bash(claude --continue)",
+      "Bash(git --version)",
+      "Bash(git config:*)",
+      "Bash(git init:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "outputStyle": "Explanatory"
+}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>즐거운 할일</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Sign-In API -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- 로그인 모달 -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">로그인</button>
+                <button class="auth-tab" data-tab="signup">회원가입</button>
+            </div>
+            
+            <div id="loginForm" class="auth-form active">
+                <h3>로그인</h3>
+                
+                <!-- 구글 로그인 섹션 -->
+                <div class="google-login-section">
+                    <div id="g_id_onload"
+                         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                         data-callback="handleGoogleLogin"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin" 
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="sign_in_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+                
+                <!-- 구분선 -->
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+                
+                <!-- 일반 로그인 폼 -->
+                <input type="text" id="loginUsername" placeholder="사용자명" required>
+                <input type="password" id="loginPassword" placeholder="비밀번호" required>
+                <button onclick="login()">로그인</button>
+            </div>
+            
+            <div id="signupForm" class="auth-form">
+                <h3>회원가입</h3>
+                
+                <!-- 구글 회원가입 섹션 -->
+                <div class="google-signup-section">
+                    <div id="g_id_onload_signup"
+                         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                         data-callback="handleGoogleSignup"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin" 
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="signup_with"
+                         data-shape="rectangular"
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+                
+                <!-- 구분선 -->
+                <div class="divider">
+                    <span>또는 직접 가입</span>
+                </div>
+                
+                <!-- 일반 회원가입 폼 -->
+                <input type="text" id="signupUsername" placeholder="사용자명 (2-20자)" required>
+                <input type="text" id="signupDisplayName" placeholder="표시 이름" required>
+                <input type="password" id="signupPassword" placeholder="비밀번호 (6자 이상)" required>
+                <input type="password" id="signupPasswordConfirm" placeholder="비밀번호 확인" required>
+                <button onclick="signup()">회원가입</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp">
+        <header>
+            <div class="header-content">
+                <h1>📝 <span id="appTitle">참좋은복사기</span></h1>
+                <div class="header-controls">
+                    <div class="mode-switch">
+                        <button id="personalModeBtn" class="mode-btn active">개인</button>
+                        <button id="teamModeBtn" class="mode-btn">팀</button>
+                    </div>
+                    <div class="user-info">
+                        <span id="userDisplay"></span>
+                        <button onclick="logout()" class="logout-btn">로그아웃</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="todo-input-section">
+            <div class="input-container">
+                <input type="text" id="todoInput" placeholder="새로운 할 일을 입력하세요..." maxlength="100">
+                <div class="date-selection">
+                    <div class="quick-date-buttons">
+                        <button type="button" class="quick-date-btn" data-days="0">오늘</button>
+                        <button type="button" class="quick-date-btn" data-days="1">내일</button>
+                        <button type="button" class="quick-date-btn" data-type="month-end">이번 달</button>
+                        <button type="button" class="quick-date-btn" data-type="next-month">다음 달</button>
+                        <button type="button" class="quick-date-btn custom-date-btn" onclick="toggleDatePicker()">다른 날짜</button>
+                    </div>
+                    <input type="date" id="dueDateInput" class="date-input hidden">
+                    <div class="time-selection hidden" id="timeSelection">
+                        <div class="time-label">시간 선택 (선택사항)</div>
+                        <div class="time-inputs">
+                            <select id="hourInput" class="time-input">
+                                <option value="">시간</option>
+                            </select>
+                            <span class="time-separator">:</span>
+                            <select id="minuteInput" class="time-input">
+                                <option value="">분</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button id="addBtn" onclick="addTodo()">OK</button>
+            </div>
+            <div class="share-options hidden" id="shareOptions">
+                <label class="share-label">
+                    <input type="radio" name="shareType" value="personal" checked>
+                    <span class="radio-custom"></span>
+                    개인
+                </label>
+                <label class="share-label">
+                    <input type="radio" name="shareType" value="team">
+                    <span class="radio-custom"></span>
+                    팀 공유
+                </label>
+            </div>
+        </div>
+        
+        <div class="todo-stats">
+            <span id="totalTodos">총 0개</span>
+            <span id="completedTodos">완료 0개</span>
+        </div>
+        
+        <div class="todo-list-section">
+            <ul id="todoList" class="todo-list">
+                <!-- 할 일 항목들이 여기에 동적으로 추가됩니다 -->
+            </ul>
+            
+            <div id="emptyState" class="empty-state">
+                <p>아직 할 일이 없습니다.</p>
+                <p>위에서 새로운 할 일을 추가해보세요! 🚀</p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button id="clearCompleted" onclick="clearCompleted()">완료된 항목 삭제</button>
+            <button id="clearAll" onclick="clearAll()">모두 삭제</button>
+        </div>
+        
+        <!-- 팀 채팅 섹션 -->
+        <div id="teamChatSection" class="team-chat-section hidden">
+            <div class="chat-header">
+                <h3>💬 팀 채팅</h3>
+                <div class="online-users">
+                    <span id="onlineCount">온라인: 1명</span>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="system-message">팀 채팅에 오신 것을 환영합니다!</div>
+            </div>
+            <div class="chat-input-section">
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." maxlength="500">
+                    <button id="sendBtn" onclick="sendMessage()">전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
