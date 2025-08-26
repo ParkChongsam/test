@@ -1008,7 +1008,7 @@ function switchMode(mode) {
     document.getElementById('teamModeBtn').classList.toggle('active', mode === 'team');
     
     // 제목 업데이트
-    const title = mode === 'personal' ? '참좋은복사기' : '참좋은복사기 팀';
+    const title = mode === 'personal' ? '기쁨과소원' : '기쁨과소원 팀';
     document.getElementById('appTitle').textContent = title;
     
     // 공유 옵션 표시/숨김
