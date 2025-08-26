@@ -13,7 +13,12 @@
       "Bash(git remote add:*)",
       "Bash(gh auth:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(gh repo view:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(gh repo sync:*)",
+      "Bash(ping:*)",
+      "Bash(git pull:*)"
     ]
   },
   "outputStyle": "Explanatory"
